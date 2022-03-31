@@ -1,7 +1,6 @@
 package API;
 
 import org.bouncycastle.crypto.generators.SCrypt;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.*;
 import java.io.Console;
@@ -17,7 +16,7 @@ import java.util.Arrays;
 
 public class Decryptor {
     public Console console;
-    public Cipher cipher;
+    public Cipher aes;
     public byte[] salt;
     public byte[] label;
     public byte[] toReturn;
@@ -25,13 +24,13 @@ public class Decryptor {
     public ArrayList<byte[]> sorted;
     public ArrayList<byte[]> encoding;
     public Decryptor() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
-        Security.addProvider(new BouncyCastleProvider());
         console = System.console();
         if (console == null) {
             System.out.println("Couldn't get Console instance");
             System.exit(0);
         }
-        cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
+        aes = Cipher.getInstance("AES/GCM/NoPadding","BC");
+
         File file = new File(Util.filePath);
         if (!file.isFile()) {
             System.err.println("No file found!!");
@@ -88,8 +87,8 @@ public class Decryptor {
             while (sorted.size()!=0) {
                 AlgorithmParameters param = AlgorithmParameters.getInstance("GCM","BC");
                 param.init(encoding.get(0));
-                cipher.init(Cipher.DECRYPT_MODE,masterKey,param);
-                byte[] decrypted = cipher.doFinal(sorted.get(0));
+                aes.init(Cipher.DECRYPT_MODE,masterKey,param);
+                byte[] decrypted = aes.doFinal(sorted.get(0));
                 byte[] toPrint = new byte[decrypted.length+1];
                 int labelLength = decrypted[0];
                 System.arraycopy(decrypted,1,toPrint,0,labelLength);
@@ -105,8 +104,8 @@ public class Decryptor {
             while (sorted.size()!=0) {
                 AlgorithmParameters param = AlgorithmParameters.getInstance("GCM","BC");
                 param.init(encoding.get(0));
-                cipher.init(Cipher.DECRYPT_MODE,masterKey,param);
-                byte[] decrypted = cipher.doFinal(sorted.get(0));
+                aes.init(Cipher.DECRYPT_MODE,masterKey,param);
+                byte[] decrypted = aes.doFinal(sorted.get(0));
                 int labelLength = decrypted[0];
                 byte[] toCheck = new byte[labelLength];
                 System.arraycopy(decrypted,1,toCheck,0,labelLength);
