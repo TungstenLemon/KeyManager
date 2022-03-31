@@ -4,6 +4,7 @@ import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.encodings.OAEPEncoding;
+import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.*;
@@ -12,6 +13,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.crypto.ntru.*;
 
 import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.DestroyFailedException;
@@ -47,7 +49,9 @@ public class RSA {
         AsymmetricKeyParameter publicKey = (AsymmetricKeyParameter) PublicKeyFactory.createKey(pub);
         AsymmetricBlockCipher rsa = new RSAEngine();
         rsa = new OAEPEncoding(rsa);
+        OAEP
         rsa.init(true, publicKey);
+        rsa.
         System.out.println(rsa.getInputBlockSize());
         System.out.println(rsa.getOutputBlockSize());
         return rsa.processBlock(plaintext,0,plaintext.length);

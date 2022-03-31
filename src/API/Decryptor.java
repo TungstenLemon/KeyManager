@@ -1,6 +1,9 @@
 package API;
 
+import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.generators.SCrypt;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.*;
@@ -17,7 +20,7 @@ import java.util.Arrays;
 
 public class Decryptor {
     public Console console;
-    public Cipher cipher;
+    public PaddedBufferedBlockCipher aes;
     public byte[] salt;
     public byte[] label;
     public byte[] toReturn;
@@ -25,13 +28,12 @@ public class Decryptor {
     public ArrayList<byte[]> sorted;
     public ArrayList<byte[]> encoding;
     public Decryptor() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
-        Security.addProvider(new BouncyCastleProvider());
         console = System.console();
         if (console == null) {
             System.out.println("Couldn't get Console instance");
             System.exit(0);
         }
-        cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
+        aes = new PaddedBufferedBlockCipher(new GCMBlockCipher(new AESEngine()));
         File file = new File(Util.filePath);
         if (!file.isFile()) {
             System.err.println("No file found!!");
