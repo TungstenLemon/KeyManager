@@ -78,6 +78,10 @@ public class Decryptor {
         return toReturn;
     }
 
+    public void destruct() {
+        Arrays.fill(toReturn,(byte)32);
+    }
+
     public void decrypt() throws NoSuchAlgorithmException, NoSuchProviderException, IOException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         char[] password = console.readPassword("Enter password:");
         byte[] hashedPass = SCrypt.generate(Util.toBytes(password), salt, 1048576, 8, 1, 32);

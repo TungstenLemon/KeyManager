@@ -14,12 +14,13 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Test {
-    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException, DestroyFailedException, InvalidCipherTextException {
+    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException, DestroyFailedException, InvalidCipherTextException, InvalidKeySpecException {
         //SignalHandler sh = new SignalHandler();
         Util.filePath = "/Users/will/Downloads/keys";
         //Encryptor en = new Encryptor();
@@ -37,7 +38,7 @@ public class Test {
         //de.decrypt();
         //System.out.println(new String(de.getResult()));
         RSA rsa = new RSA();
-        //rsa.generate();
-        rsa.encrypt("test".getBytes(StandardCharsets.UTF_8));
+        rsa.generate();
+        System.out.println(new String(rsa.decrypt(rsa.encrypt("test".getBytes(StandardCharsets.UTF_8)))));
     }
 }

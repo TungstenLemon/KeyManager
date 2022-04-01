@@ -8,6 +8,7 @@ import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.*;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.crypto.ntru.*;
@@ -25,6 +26,9 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -44,16 +48,22 @@ public class RSA {
         fos.write(keypair.getPublic().getEncoded());
         fos.close();
     }
-    public byte[] encrypt(byte[] plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidCipherTextException {
-        byte[] pub = Files.readAllBytes(Paths.get("RSApub"));
-        AsymmetricKeyParameter publicKey = (AsymmetricKeyParameter) PublicKeyFactory.createKey(pub);
-        AsymmetricBlockCipher rsa = new RSAEngine();
-        rsa = new OAEPEncoding(rsa);
-        OAEP
-        rsa.init(true, publicKey);
-        rsa.
-        System.out.println(rsa.getInputBlockSize());
-        System.out.println(rsa.getOutputBlockSize());
-        return rsa.processBlock(plaintext,0,plaintext.length);
+    public byte[] encrypt(byte[] plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidCipherTextException, InvalidKeySpecException {
+        Key pub = KeyFactory.getInstance("RSA","BC").generatePublic(new X509EncodedKeySpec(Files.readAllBytes(Paths.get("RSApub"))));
+        Cipher rsa = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-512ANDMGF1PADDING","BC");
+        SecureRandom random = SecureRandom.getInstanceStrong();
+        rsa.init(Cipher.ENCRYPT_MODE,pub,random);
+        return rsa.doFinal(plaintext);
+    }
+    public byte[] decrypt(byte[] ciphertext) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidCipherTextException, InvalidKeySpecException {
+        Decryptor de = new Decryptor();
+        de.init("RSA");
+        de.decrypt();
+        Key prv = KeyFactory.getInstance("RSA","BC").generatePrivate(new PKCS8EncodedKeySpec(de.getResult()));
+        de.destruct();
+        Cipher rsa = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-512ANDMGF1PADDING","BC");
+        SecureRandom random = SecureRandom.getInstanceStrong();
+        rsa.init(Cipher.DECRYPT_MODE,prv,random);
+        return rsa.doFinal(ciphertext);
     }
 }
