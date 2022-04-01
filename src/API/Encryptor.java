@@ -48,18 +48,14 @@ public class Encryptor {
             System.arraycopy(text,0,salt,0,64);
         }
     }
-    public void init(boolean manual) {
-        if (manual) {
-            byte[] label = console.readLine("Enter Label:").getBytes(StandardCharsets.UTF_8);
-            byte[] key = Util.toBytes(console.readPassword("Enter Key:"));
-            concatenated = new byte[label.length+key.length+1];
-            System.arraycopy(key,0,concatenated,label.length+1,key.length);
-            Arrays.fill(key, (byte)0);
-            concatenated[0] = (byte)label.length;
-            System.arraycopy(label,0,concatenated,1,label.length);
-        } else {
-            System.err.println("No param found! Wrong method usage");
-        }
+    public void init() {
+        byte[] label = console.readLine("Enter Label:").getBytes(StandardCharsets.UTF_8);
+        byte[] key = Util.toBytes(console.readPassword("Enter Key:"));
+        concatenated = new byte[label.length+key.length+1];
+        System.arraycopy(key,0,concatenated,label.length+1,key.length);
+        Arrays.fill(key, (byte)0);
+        concatenated[0] = (byte)label.length;
+        System.arraycopy(label,0,concatenated,1,label.length);
     }
     public void init(String label,char[] key) {
         byte[] Label = label.getBytes(StandardCharsets.UTF_8);

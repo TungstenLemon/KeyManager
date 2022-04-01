@@ -62,12 +62,8 @@ public class Decryptor {
             control = control-4-length-71;
         }
     }
-    public void init(boolean manual) {
-        if (manual) {
-            mode = true;
-        } else {
-            System.err.println("No param found! Wrong method usage");
-        }
+    public void init() {
+        mode = true;
     }
     public void init(String label) {
         mode = false;
